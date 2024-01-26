@@ -8,4 +8,11 @@
 5. [ ] Offline message history
 
 ## Project Setup
+```bash
+pnpm setup:custom
+```
 
+## Development
+```bash
+pnpm dev
+```

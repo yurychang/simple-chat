@@ -1,5 +1,5 @@
 pnpm install
 
 cd apps/chat-server
-cp .env.example .env
+cp .env.sample .env
 npx prisma generate

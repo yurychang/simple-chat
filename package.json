@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "dev": "bash ./scripts/dev.sh",
     "web": "pnpm --filter web",
     "chat-server": "pnpm --filter chat-server",
     "setup:custom": "bash ./scripts/setup.sh"
