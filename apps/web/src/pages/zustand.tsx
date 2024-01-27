@@ -1,4 +1,4 @@
-import { Button } from '@/components/button';
+import { Button } from '@/components/ui/button';
 import { useStore } from '@/store';
 
 const Zustand = () => {
