@@ -1,25 +1,29 @@
 import app from './app';
 import _debug from 'debug';
 import http from 'http';
+import { Server } from 'socket.io';
 
 const debug = _debug('express-rest-api-template');
-
-/**
- * Get port from environment and store in Express.
- */
 
 const port = normalizePort(process.env.PORT);
 app.set('port', port);
 
-/**
- * Create HTTP server.
- */
-
 const server = http.createServer(app);
 
-/**
- * Listen on provided port, on all network interfaces.
- */
+const io = new Server(server, {
+  cors: {
+    origin: 'http://localhost:5173',
+    credentials: true,
+  },
+});
+
+io.on('connection', (socket) => {
+  console.log('a user connected', socket.id);
+  socket.on('message', (msg) => {
+    console.log('message: ' + msg);
+    io.emit('chat message', msg);
+  });
+});
 
 server.listen(port);
 server.on('error', onError);
@@ -76,5 +80,5 @@ function onError(error: any) {
 function onListening() {
   const addr = server.address();
   const bind = typeof addr === 'string' ? 'pipe ' + addr : 'port ' + addr!.port;
-  debug('Listening on ' + bind);
+  console.log('Server listening on ' + bind);
 }
