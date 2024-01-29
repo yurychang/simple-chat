@@ -1,7 +1,7 @@
 import app from './app';
 import _debug from 'debug';
 import http from 'http';
-import { Server } from 'socket.io';
+import { bindSocket } from './socketio';
 
 const debug = _debug('express-rest-api-template');
 
@@ -10,20 +10,7 @@ app.set('port', port);
 
 const server = http.createServer(app);
 
-const io = new Server(server, {
-  cors: {
-    origin: 'http://localhost:5173',
-    credentials: true,
-  },
-});
-
-io.on('connection', (socket) => {
-  console.log('a user connected', socket.id);
-  socket.on('message', (msg) => {
-    console.log('message: ' + msg);
-    io.emit('chat message', msg);
-  });
-});
+bindSocket(server);
 
 server.listen(port);
 server.on('error', onError);
