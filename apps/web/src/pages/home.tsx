@@ -1,11 +1,14 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { ElementRef, useEffect, useRef } from 'react';
+import { ElementRef, useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { RxMagnifyingGlass } from 'react-icons/rx';
 import { Outlet } from 'react-router-dom';
 import { z } from 'zod';
 
 import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormField, FormItem } from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { UserSelectDialog } from '@/components/user-select-dialog';
 import { socket } from '@/libs/socket';
 
 const formSchema = z.object({
@@ -41,9 +44,9 @@ export function Home() {
     <>
       <div>
         <Outlet />
-        <div className="grid min-h-screen grid-cols-3 gap-3 px-5">
+        <div className="grid min-h-screen grid-cols-4 gap-3 px-5">
           <Sidebar></Sidebar>
-          <div className="relative h-full col-span-2 py-5">
+          <div className="relative h-full col-span-3 py-5">
             <Form {...form}>
               <form
                 className="absolute left-0 right-0 flex items-end w-full gap-3 bottom-5"
@@ -78,7 +81,18 @@ export function Home() {
 }
 
 function Sidebar() {
-  return <div className="py-5">Sidebar</div>;
+  const [open, setOpen] = useState(false);
+  return (
+    <div className="py-5">
+      <Input
+        leftIcon={<RxMagnifyingGlass />}
+        readOnly
+        className="focus-visible:ring-0"
+        onFocus={() => setOpen(true)}
+      ></Input>
+      <UserSelectDialog open={open} onOpenChange={setOpen}></UserSelectDialog>
+    </div>
+  );
 }
 
 export default Home;
