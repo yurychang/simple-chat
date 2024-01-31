@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "bash ./scripts/dev.sh",
     "web": "pnpm --filter web",
+    "common": "pnpm --filter common",
     "chat-server": "pnpm --filter chat-server",
     "setup:custom": "bash ./scripts/setup.sh"
   },

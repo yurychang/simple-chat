@@ -1,15 +1,22 @@
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useQuery } from '@tanstack/react-query';
 import { ElementRef, useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { RxMagnifyingGlass } from 'react-icons/rx';
+import { LuSearch } from 'react-icons/lu';
 import { Outlet } from 'react-router-dom';
 import { z } from 'zod';
 
 import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormField, FormItem } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { UserSelectDialog } from '@/components/user-select-dialog';
+import {
+  UserSelectDialog,
+  UserSelectDialogProps,
+} from '@/components/user-select-dialog';
+import { RoomType } from '@/constants/enums';
 import { socket } from '@/libs/socket';
+import { useStore } from '@/store';
+import { Room } from '@/types';
 
 const formSchema = z.object({
   message: z.string().min(1),
@@ -40,6 +47,7 @@ export function Home() {
       messageInput.current.textContent = '';
     }
   }
+
   return (
     <>
       <div>
@@ -82,15 +90,82 @@ export function Home() {
 
 function Sidebar() {
   const [open, setOpen] = useState(false);
+
+  const userRooms = useQuery({
+    queryKey: ['chat/user-rooms'],
+    queryFn: () =>
+      fetch(
+        `http://localhost:8080/chat/user-rooms/${socket.id?.toLowerCase()}`,
+      ).then((res) => res.json() as Promise<Room[]>),
+  });
+
+  const createDmRoom = useStore((state) => state.createDmRoom);
+
+  const onSelect: UserSelectDialogProps['onSelect'] = (user) => {
+    const existRoom = userRooms.data?.find(
+      (room) => room.type === RoomType.DM && room.members.includes(user.id),
+    );
+
+    if (existRoom) {
+      console.log('exist room', existRoom);
+    } else {
+      createDmRoom(user.id, user.name || user.id);
+    }
+  };
+
   return (
     <div className="py-5">
+      <p>{socket.id}</p>
+      <div className="my-3"></div>
       <Input
-        leftIcon={<RxMagnifyingGlass />}
+        leftIcon={<LuSearch />}
         readOnly
         className="focus-visible:ring-0"
         onFocus={() => setOpen(true)}
       ></Input>
-      <UserSelectDialog open={open} onOpenChange={setOpen}></UserSelectDialog>
+      <UserSelectDialog
+        open={open}
+        onOpenChange={setOpen}
+        onSelect={onSelect}
+      ></UserSelectDialog>
+      <div className="my-3"></div>
+      <UserRooms></UserRooms>
+    </div>
+  );
+}
+
+function UserRooms() {
+  const existRooms = useQuery({
+    queryKey: ['chat/user-rooms'],
+    queryFn: () =>
+      fetch(
+        `http://localhost:8080/chat/user-rooms/${socket.id?.toLowerCase()}`,
+      ).then((res) => res.json() as Promise<Room[]>),
+  });
+
+  const localRooms = useStore((state) => state.rooms);
+
+  const rooms = [...(existRooms.data || []), ...localRooms]
+    .sort((a, b) => b.createdAt - a.createdAt)
+    .map((room) => {
+      if (room.type === RoomType.DM) {
+        return {
+          ...room,
+          name: room.members.find((member) => member !== socket.id),
+        };
+      }
+      return room;
+    });
+
+  return (
+    <div className="space-y-3">
+      {rooms.map((room) => (
+        <div key={room.id} className="p-3 border rounded">
+          <p className="overflow-hidden text-clip whitespace-nowrap">
+            {room.name}
+          </p>
+        </div>
+      ))}
     </div>
   );
 }

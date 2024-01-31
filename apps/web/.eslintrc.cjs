@@ -2,10 +2,10 @@ module.exports = {
   root: true,
   env: { browser: true, es2020: true },
   extends: [
-    '@yurychang/react',
-    '@yurychang/typescript',
     'plugin:vitest/recommended',
     'plugin:@tanstack/eslint-plugin-query/recommended',
+    '@yurychang/react',
+    '@yurychang/typescript',
     'prettier',
   ],
   plugins: ['simple-import-sort', 'import'],

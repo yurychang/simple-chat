@@ -3,15 +3,13 @@ import { devtools } from 'zustand/middleware';
 
 import { createSelectors } from '@/utils/createSelectors';
 
-import { BearSlice, createBearSlice } from './bear';
-import { createFishSlice, FishSlice } from './fish';
+import { createLocalRoomSlice, LocalRoomSlice } from './local-room';
 
 export const useStore = createSelectors(
-  create<BearSlice & FishSlice>()(
+  create<LocalRoomSlice>()(
     devtools(
       (...a) => ({
-        ...createBearSlice(...a),
-        ...createFishSlice(...a),
+        ...createLocalRoomSlice(...a),
       }),
       { enabled: import.meta.env.DEV },
     ),

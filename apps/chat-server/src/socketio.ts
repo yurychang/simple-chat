@@ -1,6 +1,6 @@
 import { Server } from 'socket.io';
 import type * as http from 'http';
-import { messageHandler } from './features/chat/socket-handler';
+import { messageHandler } from './features/chat/message-handler';
 import { userHandler } from './features/user/user-handler';
 
 export const bindSocket = (server: http.Server) => {
