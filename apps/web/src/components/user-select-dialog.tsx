@@ -9,7 +9,7 @@ import {
   CommandItem,
   CommandList,
 } from '@/components/ui/command';
-import { socket } from '@/libs/socket';
+import { userId } from '@/store/user';
 
 type User = {
   id: string;
@@ -42,7 +42,7 @@ export function UserSelectDialog({
   const query = useQuery({
     queryKey: ['chat/online-users'],
     queryFn: () =>
-      fetch(`http://localhost:8080/chat/online-users?userId=${socket.id}`).then(
+      fetch(`http://localhost:8080/chat/online-users?userId=${userId}`).then(
         (res) => res.json() as Promise<User[]>,
       ),
   });

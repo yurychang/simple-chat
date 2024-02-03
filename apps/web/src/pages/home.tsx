@@ -8,7 +8,6 @@ import { Outlet } from 'react-router-dom';
 import { z } from 'zod';
 
 import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
 import {
   Dialog,
   DialogContent,
@@ -29,8 +28,9 @@ import {
   UserSelectDialogProps,
 } from '@/components/user-select-dialog';
 import { RoomType } from '@/constants/enums';
-import { socket } from '@/libs/socket';
+import { roomSocket, socket, userSocket } from '@/libs/socket';
 import { useStore } from '@/store';
+import { userId } from '@/store/user';
 import { Room } from '@/types';
 
 const formSchema = z.object({
@@ -132,7 +132,7 @@ function Sidebar() {
     <div className="py-5">
       <SetupUsernameDialog>
         <p>{user.name}</p>
-        <p className="text-sm text-slate-400">#{socket.id}</p>
+        <p className="text-sm text-slate-400">#{userId}</p>
       </SetupUsernameDialog>
       <div className="my-3"></div>
       <Input
@@ -156,9 +156,11 @@ function UserRooms() {
   const existRooms = useQuery({
     queryKey: ['chat/user-rooms'],
     queryFn: () =>
-      fetch(
-        `http://localhost:8080/chat/user-rooms/${socket.id?.toLowerCase()}`,
-      ).then((res) => res.json() as Promise<Room[]>),
+      new Promise<Room[]>((resolve) => {
+        roomSocket.emit('user-rooms', '', (response: Room[]) =>
+          resolve(response),
+        );
+      }),
   });
 
   const localRooms = useStore((state) => state.rooms);
@@ -176,14 +178,17 @@ function UserRooms() {
     });
 
   return (
-    <div className="space-y-3">
-      {rooms.map((room) => (
-        <div key={room.id} className="p-3 border rounded">
-          <p className="overflow-hidden text-clip whitespace-nowrap">
-            {room.name}
-          </p>
-        </div>
-      ))}
+    <div className="mt-5">
+      <p className="mb-3 text-gray-600">Rooms</p>
+      <div className="space-y-3">
+        {rooms.map((room) => (
+          <div key={room.id} className="p-3 border rounded">
+            <p className="overflow-hidden text-clip whitespace-nowrap">
+              {room.name}
+            </p>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
@@ -209,15 +214,15 @@ function SetupUsernameDialog({ children }: { children: React.ReactNode }) {
   const form = useForm({
     resolver: zodResolver(userFormSchema),
     defaultValues: {
-      username: user.name || '',
+      username: user.name || 'Peter',
     },
   });
 
   function onSubmit(values: z.infer<typeof userFormSchema>) {
     setUsername(values.username);
-    socket.emit(
-      'updateUsername',
-      values.username,
+    userSocket.emit(
+      'update-user',
+      { name: values.username },
       (response: { ok: boolean }) => {
         if (response.ok) {
           changeOpen(false);

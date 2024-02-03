@@ -1,7 +1,8 @@
 import { Server } from 'socket.io';
 import type * as http from 'http';
-import { messageHandler } from './features/chat/message-handler';
-import { userHandler } from './features/user/user-handler';
+import { registerMessageHandlers as registerMessageHandler } from './socket/messages';
+import { registerUserHandlers } from './socket/users';
+import { registerRoomHandlers } from './socket/rooms';
 
 export const bindSocket = (server: http.Server) => {
   const io = new Server(server, {
@@ -11,9 +12,18 @@ export const bindSocket = (server: http.Server) => {
     },
   });
 
+  io.of('/users').on('connection', (socket) => {
+    registerUserHandlers(socket, io);
+  });
+
+  io.of('/messages').on('connection', (socket) => {
+    registerMessageHandler(socket, io);
+  });
+  io.of('/rooms').on('connection', (socket) => {
+    registerRoomHandlers(socket, io);
+  });
+
   io.on('connection', (socket) => {
     console.log('a user connected', socket.id);
-    userHandler(socket, io);
-    messageHandler(socket, io);
   });
 };

@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { connectedUsers } from '@/features/data';
-import { roomManager } from '@/features/chat/room';
+import { roomManager } from '@/features/room';
 
 export const chatRouter = Router();
 
@@ -10,6 +10,7 @@ chatRouter.get('/online-users', function (req, res, next) {
     id: user.id,
     name: user.name,
   })).filter(({ id }) => id !== userId);
+  console.log(users);
   res.json(users);
 });
 

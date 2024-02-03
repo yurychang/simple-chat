@@ -1,7 +1,7 @@
 import { v4 as uuid } from 'uuid';
-import { Room } from '../types';
-import { RoomType } from '../enums';
-import { connectedUsers, roomMap, userRoomMap } from '../data';
+import { Room } from './types';
+import { RoomType } from './enums';
+import { connectedUsers, roomMap, userRoomMap } from './data';
 
 export const roomManager = {
   createRoom: (name: string, type: Room['type']) => {
