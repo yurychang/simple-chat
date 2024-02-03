@@ -4,12 +4,14 @@ import { devtools } from 'zustand/middleware';
 import { createSelectors } from '@/utils/createSelectors';
 
 import { createLocalRoomSlice, LocalRoomSlice } from './local-room';
+import { createUserSlice, UserSlice } from './user';
 
 export const useStore = createSelectors(
-  create<LocalRoomSlice>()(
+  create<LocalRoomSlice & UserSlice>()(
     devtools(
       (...a) => ({
         ...createLocalRoomSlice(...a),
+        ...createUserSlice(...a),
       }),
       { enabled: import.meta.env.DEV },
     ),

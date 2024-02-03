@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { connectedUsers, userRoomMap } from '@/features/data';
+import { connectedUsers } from '@/features/data';
 import { roomManager } from '@/features/chat/room';
 
 export const chatRouter = Router();
@@ -26,6 +26,5 @@ chatRouter.get('/user-rooms/:userId', function (req, res, next) {
   const { userId } = req.params;
   const rooms = roomManager.getUserRooms(userId);
 
-  console.log(Object.fromEntries(userRoomMap.entries()));
   res.json(rooms);
 });

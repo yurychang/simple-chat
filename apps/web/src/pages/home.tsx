@@ -1,4 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod';
+import { DialogTitle } from '@radix-ui/react-dialog';
 import { useQuery } from '@tanstack/react-query';
 import { ElementRef, useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -7,7 +8,21 @@ import { Outlet } from 'react-router-dom';
 import { z } from 'zod';
 
 import { Button } from '@/components/ui/button';
-import { Form, FormControl, FormField, FormItem } from '@/components/ui/form';
+import { Card } from '@/components/ui/card';
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTrigger,
+} from '@/components/ui/dialog';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormMessage,
+} from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import {
   UserSelectDialog,
@@ -90,7 +105,7 @@ export function Home() {
 
 function Sidebar() {
   const [open, setOpen] = useState(false);
-
+  const user = useStore((state) => state.user);
   const userRooms = useQuery({
     queryKey: ['chat/user-rooms'],
     queryFn: () =>
@@ -115,7 +130,10 @@ function Sidebar() {
 
   return (
     <div className="py-5">
-      <p>{socket.id}</p>
+      <SetupUsernameDialog>
+        <p>{user.name}</p>
+        <p className="text-sm text-slate-400">#{socket.id}</p>
+      </SetupUsernameDialog>
       <div className="my-3"></div>
       <Input
         leftIcon={<LuSearch />}
@@ -167,6 +185,81 @@ function UserRooms() {
         </div>
       ))}
     </div>
+  );
+}
+
+const userFormSchema = z.object({
+  username: z.string().min(2, {
+    message: 'Username must be at least 2 characters.',
+  }),
+});
+
+function SetupUsernameDialog({ children }: { children: React.ReactNode }) {
+  const [open, setOpen] = useState(true);
+
+  const user = useStore((state) => state.user);
+
+  const changeOpen = (value: boolean) => {
+    if (!user.name) return;
+    setOpen(value);
+  };
+
+  const setUsername = useStore((state) => state.setUsername);
+
+  const form = useForm({
+    resolver: zodResolver(userFormSchema),
+    defaultValues: {
+      username: user.name || '',
+    },
+  });
+
+  function onSubmit(values: z.infer<typeof userFormSchema>) {
+    setUsername(values.username);
+    socket.emit(
+      'updateUsername',
+      values.username,
+      (response: { ok: boolean }) => {
+        if (response.ok) {
+          changeOpen(false);
+        }
+      },
+    );
+  }
+
+  return (
+    <>
+      <Dialog open={open} onOpenChange={changeOpen}>
+        <DialogTrigger asChild>
+          <Button className="flex-col items-start h-[60px] text-md w-full bg-slate-800">
+            {children}
+          </Button>
+        </DialogTrigger>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Enter your name</DialogTitle>
+          </DialogHeader>
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3">
+              <FormField
+                control={form.control}
+                name="username"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <Input {...field}></Input>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <DialogFooter>
+                <Button type="submit">Save changes</Button>
+              </DialogFooter>
+            </form>
+          </Form>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 }
 

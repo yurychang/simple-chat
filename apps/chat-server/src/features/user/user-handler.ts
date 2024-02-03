@@ -6,8 +6,8 @@ export const userHandler = (socket: Socket, io: Server) => {
   socket.on('disconnect', (reason) => {
     connectedUsers.delete(socket.id);
   });
-  socket.on('updateName', (username: string) => {
-    console.log(username);
+  socket.on('updateUsername', (username: string, callback) => {
     connectedUsers.set(socket.id, { id: socket.id, name: username, socket });
+    callback({ ok: true });
   });
 };
