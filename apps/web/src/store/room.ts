@@ -3,14 +3,6 @@ import { StateCreator } from 'zustand';
 
 import { RoomType } from '@/constants/enums';
 
-export type LocalRoom = {
-  id: string;
-  name: string;
-  type: RoomType;
-  members: { id: string; name: string }[];
-  createdAt: number;
-};
-
 export type Message = { author: string; content: string; createAt: number };
 
 export type Room = {
@@ -24,8 +16,9 @@ export type Room = {
 
 export interface RoomSlice {
   currentRoomId: string | null;
+  currentRoom: () => Room | null;
   rooms: Room[];
-  localRooms: LocalRoom[];
+  localRooms: Room[];
   createLocalDmRoom: (targetUserId: string, targetUserName: string) => void;
   setRooms: (rooms: Room[]) => void;
   setCurrentRoom: (roomId: string) => void;
@@ -36,8 +29,13 @@ export interface RoomSlice {
 
 export const createRoomSlice: StateCreator<RoomSlice, [], [], RoomSlice> = (
   set,
+  get,
 ) => ({
   currentRoomId: null,
+  currentRoom: () =>
+    [...get().rooms, ...get().localRooms].find(
+      (room) => room.id === get().currentRoomId,
+    ) || null,
   rooms: [],
   localRooms: [],
   setCurrentRoom: (roomId) => set(() => ({ currentRoomId: roomId })),
@@ -46,9 +44,7 @@ export const createRoomSlice: StateCreator<RoomSlice, [], [], RoomSlice> = (
       const existRoom = [...state.localRooms, ...state.rooms].find(
         (room) =>
           room.type === RoomType.DM &&
-          room.members
-            .map((member) => (typeof member === 'string' ? member : member.id))
-            .includes(targetUserId),
+          room.members.map((member) => member.id).includes(targetUserId),
       );
       if (existRoom) {
         return {
@@ -65,6 +61,7 @@ export const createRoomSlice: StateCreator<RoomSlice, [], [], RoomSlice> = (
               type: RoomType.DM,
               members: [{ id: targetUserId, name: targetUserName }],
               createdAt: Date.now(),
+              messages: [],
             },
           ],
           currentRoomId: roomId,
@@ -75,14 +72,18 @@ export const createRoomSlice: StateCreator<RoomSlice, [], [], RoomSlice> = (
   setRooms: (rooms) => set(() => ({ rooms })),
   addMessage: (roomId, message) => {
     set((state) => {
-      const room = state.rooms.find((r) => r.id === roomId);
+      const room = [...state.rooms, ...state.localRooms].find(
+        (r) => r.id === roomId,
+      );
       if (room) {
         room.messages = [...room.messages, message];
       }
-      return state;
+      return { rooms: [...state.rooms], localRooms: [...state.localRooms] };
     });
   },
-  addRoom: (room) => set((state) => ({ rooms: [...state.rooms, room] })),
+  addRoom: (room) => {
+    set((state) => ({ rooms: [...state.rooms, room] }));
+  },
   removeLocalRoom: (roomId) =>
     set((state) => ({
       localRooms: state.localRooms.filter((room) => room.id !== roomId),

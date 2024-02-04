@@ -22,7 +22,7 @@ export function Sidebar() {
   };
 
   return (
-    <div className="py-5">
+    <div className="p-5">
       <SetUsernameDialog>
         <p>{user.name}</p>
         <p className="text-sm text-slate-400">#{userId}</p>

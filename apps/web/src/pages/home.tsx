@@ -8,7 +8,7 @@ export function Home() {
     <>
       <div>
         <Outlet />
-        <div className="grid min-h-screen grid-cols-4 gap-3 px-5">
+        <div className="grid min-h-screen grid-cols-4 gap-3">
           <Sidebar></Sidebar>
           <RoomView></RoomView>
         </div>

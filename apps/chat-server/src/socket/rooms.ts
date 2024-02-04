@@ -16,13 +16,13 @@ export const registerRoomHandlers = (socket: Socket, io: Server) => {
       }),
     }))
   );
-  socket.on('rooms:create-dm', (r: { targetUserId: string }, cb) => {
+  socket.on('rooms:new-dm', (r: { targetUserId: string }, cb) => {
     const room = roomManager.createDMRoom(
       socket.handshake.auth.token,
       r.targetUserId
     );
 
-    const nroom = {
+    const res = {
       ...room,
       members: room.members.map((id) => {
         const user = connectedUsers.get(id);
@@ -33,9 +33,10 @@ export const registerRoomHandlers = (socket: Socket, io: Server) => {
       }),
     };
 
-    connectedUsers.get(socket.handshake.auth.token)?.socket.join(room.id);
+    socket.join(room.id);
     connectedUsers.get(r.targetUserId)?.socket.join(room.id);
+    socket.to(room.id).emit('rooms:new', res);
 
-    cb(nroom);
+    cb(res);
   });
 };

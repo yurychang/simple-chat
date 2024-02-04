@@ -6,9 +6,16 @@ import { store } from '@/store';
 import { Room } from '@/store/room';
 
 export const registerRoomHandlers = (socket: Socket) => {
-  socket.on('rooms', (rooms: Room[]) => {
+  socket.on('rooms', (rooms: Omit<Room, 'messages'>[]) => {
     unstable_batchedUpdates(() => {
-      store.getState().setRooms(rooms);
+      store
+        .getState()
+        .setRooms(rooms.map((room) => ({ ...room, messages: [] })));
+    });
+  });
+  socket.on('rooms:new', (room: Omit<Room, 'messages'>) => {
+    unstable_batchedUpdates(() => {
+      store.getState().addRoom({ ...room, messages: [] });
     });
   });
 };
