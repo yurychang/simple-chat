@@ -17,4 +17,5 @@ export type Room = {
   members: string[];
   type: RoomType;
   createdAt: number;
+  createdBy: string;
 };

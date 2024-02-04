@@ -1,9 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { DialogTitle } from '@radix-ui/react-dialog';
-import { useQuery } from '@tanstack/react-query';
 import { ElementRef, useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { LuSearch } from 'react-icons/lu';
 import { Outlet } from 'react-router-dom';
 import { z } from 'zod';
 
@@ -23,15 +21,10 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import {
-  UserSelectDialog,
-  UserSelectDialogProps,
-} from '@/components/user-select-dialog';
-import { RoomType } from '@/constants/enums';
-import { roomSocket, socket, userSocket } from '@/libs/socket';
+import { socket, userSocket } from '@/libs/socket';
 import { useStore } from '@/store';
-import { userId } from '@/store/user';
-import { Room } from '@/types';
+
+import { Sidebar } from '../components/sidebar';
 
 const formSchema = z.object({
   message: z.string().min(1),
@@ -103,97 +96,17 @@ export function Home() {
   );
 }
 
-function Sidebar() {
-  const [open, setOpen] = useState(false);
-  const user = useStore((state) => state.user);
-  const rooms = useStore.use.rooms();
-
-  const createDmRoom = useStore((state) => state.createLocalDmRoom);
-
-  const onSelect: UserSelectDialogProps['onSelect'] = (user) => {
-    const existRoom = rooms.find(
-      (room) => room.type === RoomType.DM && room.members.includes(user.id),
-    );
-
-    if (existRoom) {
-      console.log('exist room', existRoom);
-    } else {
-      createDmRoom(user.id, user.name || user.id);
-    }
-  };
-
-  return (
-    <div className="py-5">
-      <SetupUsernameDialog>
-        <p>{user.name}</p>
-        <p className="text-sm text-slate-400">#{userId}</p>
-      </SetupUsernameDialog>
-      <div className="my-3"></div>
-      <Input
-        leftIcon={<LuSearch />}
-        readOnly
-        className="focus-visible:ring-0"
-        onFocus={() => setOpen(true)}
-      ></Input>
-      <UserSelectDialog
-        open={open}
-        onOpenChange={setOpen}
-        onSelect={onSelect}
-      ></UserSelectDialog>
-      <div className="my-3"></div>
-      <UserRooms></UserRooms>
-    </div>
-  );
-}
-
-function UserRooms() {
-  const existRooms = useQuery({
-    queryKey: ['chat/user-rooms'],
-    queryFn: () =>
-      new Promise<Room[]>((resolve) => {
-        roomSocket.emit('user-rooms', '', (response: Room[]) =>
-          resolve(response),
-        );
-      }),
-  });
-
-  const localRooms = useStore((state) => state.localRooms);
-
-  const rooms = [...(existRooms.data || []), ...localRooms]
-    .sort((a, b) => b.createdAt - a.createdAt)
-    .map((room) => {
-      if (room.type === RoomType.DM) {
-        return {
-          ...room,
-          name: room.members.find((member) => member !== socket.id),
-        };
-      }
-      return room;
-    });
-
-  return (
-    <div className="mt-5">
-      <p className="mb-3 text-gray-600">Rooms</p>
-      <div className="space-y-3">
-        {rooms.map((room) => (
-          <div key={room.id} className="p-3 border rounded">
-            <p className="overflow-hidden text-clip whitespace-nowrap">
-              {room.name}
-            </p>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
 const userFormSchema = z.object({
   username: z.string().min(2, {
     message: 'Username must be at least 2 characters.',
   }),
 });
 
-function SetupUsernameDialog({ children }: { children: React.ReactNode }) {
+export function SetupUsernameDialog({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   const [open, setOpen] = useState(true);
 
   const user = useStore((state) => state.user);

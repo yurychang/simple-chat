@@ -10,7 +10,6 @@ chatRouter.get('/online-users', function (req, res, next) {
     id: user.id,
     name: user.name,
   })).filter(({ id }) => id !== userId);
-  console.log(users);
   res.json(users);
 });
 

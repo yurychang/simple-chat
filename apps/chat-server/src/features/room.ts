@@ -1,24 +1,33 @@
 import { v4 as uuid } from 'uuid';
 import { Room } from './types';
 import { RoomType } from './enums';
-import { connectedUsers, roomMap, userRoomMap } from './data';
+import { connectedUsers, roomMap } from './data';
+
+const userRoomMap = new Map<string, { id: string; type: RoomType }[]>();
 
 export const roomManager = {
-  createRoom: (name: string, type: Room['type']) => {
+  createRoom: (name: string, createdBy: string, type: Room['type']) => {
     const id = uuid();
-    const room = { id, name, type, members: [], createdAt: Date.now() };
+    const room = {
+      id,
+      name,
+      type,
+      createdBy,
+      members: [],
+      createdAt: Date.now(),
+    };
     roomMap.set(id, room);
     return room;
   },
-  createDMRoom: (user1: string, user2: string) => {
-    let room = roomManager.getDMRoom(user1, user2);
+  createDMRoom: (creator: string, targetUser: string) => {
+    let room = roomManager.getDMRoom(creator, targetUser);
     if (room) {
       return room;
     }
-    const name = `${user1}-${user2}`;
-    room = roomManager.createRoom(name, RoomType.DM);
-    roomManager.joinRoom(room.id, user1);
-    roomManager.joinRoom(room.id, user2);
+    const name = `${creator}-${targetUser}`;
+    room = roomManager.createRoom(name, creator, RoomType.DM);
+    roomManager.joinRoom(room.id, creator);
+    roomManager.joinRoom(room.id, targetUser);
     return room.id;
   },
   joinRoom: (roomId: string, userId: string) => {
@@ -49,7 +58,7 @@ export const roomManager = {
     return dmRoom && roomMap.get(dmRoom.id);
   },
   getUserRooms: (userId: string) => {
-    const rooms = userRoomMap.get(userId);
-    return rooms?.map(({ id }) => roomMap.get(id)) || [];
+    const rooms = userRoomMap.get(userId) || [];
+    return rooms.map(({ id }) => roomMap.get(id) as Room);
   },
 };
