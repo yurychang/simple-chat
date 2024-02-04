@@ -22,7 +22,7 @@ chatRouter.post('/start-dm-chat', function (req, res, next) {
   res.json({ roomId });
 });
 
-chatRouter.get('/user-rooms/:userId', function (req, res, next) {
+chatRouter.get('/rooms/:userId', function (req, res, next) {
   const { userId } = req.params;
   const rooms = roomManager.getUserRooms(userId);
 

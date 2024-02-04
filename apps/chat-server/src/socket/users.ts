@@ -14,7 +14,7 @@ export const registerUserHandlers = (socket: Socket, io: Server) => {
     connectedUsers.delete(socket.handshake.auth.token);
   });
 
-  socket.on('update-user', (userData: { name: string }, callback) => {
+  socket.on('user:update', (userData: { name: string }, callback) => {
     connectedUsers.set(socket.handshake.auth.token, {
       id: socket.handshake.auth.token,
       name: userData.name,
@@ -25,7 +25,7 @@ export const registerUserHandlers = (socket: Socket, io: Server) => {
 
     const rooms = roomManager.getUserRooms(socket.handshake.auth.token);
     rooms.forEach((room) => {
-      io.to(room?.id).emit('update-user', {
+      io.to(room?.id).emit('user:update', {
         id: socket.handshake.auth.token,
         name: userData.name,
       });

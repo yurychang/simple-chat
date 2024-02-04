@@ -21,7 +21,7 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { socket, userSocket } from '@/libs/socket';
+import { socket } from '@/libs/socket';
 import { useStore } from '@/store';
 
 import { Sidebar } from '../components/sidebar';
@@ -127,8 +127,8 @@ export function SetupUsernameDialog({
 
   function onSubmit(values: z.infer<typeof userFormSchema>) {
     setUsername(values.username);
-    userSocket.emit(
-      'update-user',
+    socket.emit(
+      'user:update',
       { name: values.username },
       (response: { ok: boolean }) => {
         if (response.ok) {

@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 
 import { RoomType } from '@/constants/enums';
-import { roomSocket } from '@/libs/socket';
+import { socket } from '@/libs/socket';
 import { useStore } from '@/store';
 import { userId } from '@/store/user';
 import { Room } from '@/types';
@@ -12,12 +12,10 @@ export function UserRooms() {
   const currentRoomId = useStore.use.currentRoomId();
 
   const remoteRooms = useQuery({
-    queryKey: ['chat/user-rooms'],
+    queryKey: ['chat/rooms'],
     queryFn: () =>
       new Promise<Room[]>((resolve) => {
-        roomSocket.emit('user-rooms', '', (response: Room[]) =>
-          resolve(response),
-        );
+        socket.emit('rooms', '', (response: Room[]) => resolve(response));
       }),
   });
 

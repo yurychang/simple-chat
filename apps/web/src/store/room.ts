@@ -36,20 +36,35 @@ export const createRoomSlice: StateCreator<RoomSlice, [], [], RoomSlice> = (
   localRooms: [],
   setCurrentRoom: (roomId) => set(() => ({ currentRoomId: roomId })),
   createLocalDmRoom: (targetUserId, targetUserName) => {
-    const roomId = uuid();
-    set((state) => ({
-      localRooms: [
-        ...state.localRooms,
-        {
-          id: roomId,
-          name: targetUserName,
-          type: RoomType.DM,
-          members: [{ id: targetUserId, name: targetUserName }],
-          createdAt: Date.now(),
-        },
-      ],
-      currentRoomId: roomId,
-    }));
+    set((state) => {
+      const existRoom = [...state.localRooms, ...state.rooms].find(
+        (room) =>
+          room.type === RoomType.DM &&
+          room.members
+            .map((member) => (typeof member === 'string' ? member : member.id))
+            .includes(targetUserId),
+      );
+      if (existRoom) {
+        return {
+          currentRoomId: existRoom.id,
+        };
+      } else {
+        const roomId = uuid();
+        return {
+          localRooms: [
+            ...state.localRooms,
+            {
+              id: roomId,
+              name: targetUserName,
+              type: RoomType.DM,
+              members: [{ id: targetUserId, name: targetUserName }],
+              createdAt: Date.now(),
+            },
+          ],
+          currentRoomId: roomId,
+        };
+      }
+    });
   },
   setRooms: (rooms) => set(() => ({ rooms })),
 });

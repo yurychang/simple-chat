@@ -12,14 +12,9 @@ export const bindSocket = (server: http.Server) => {
     },
   });
 
-  io.of('/users').on('connection', (socket) => {
+  io.of('/').on('connection', (socket) => {
     registerUserHandlers(socket, io);
-  });
-
-  io.of('/messages').on('connection', (socket) => {
     registerMessageHandler(socket, io);
-  });
-  io.of('/rooms').on('connection', (socket) => {
     registerRoomHandlers(socket, io);
   });
 

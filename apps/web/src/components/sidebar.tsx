@@ -16,20 +16,11 @@ import { SetupUsernameDialog } from '../pages/home';
 export function Sidebar() {
   const [open, setOpen] = useState(false);
   const user = useStore((state) => state.user);
-  const rooms = useStore.use.rooms();
 
   const createDmRoom = useStore.use.createLocalDmRoom();
 
   const onSelect: UserSelectDialogProps['onSelect'] = (user) => {
-    const existRoom = rooms.find(
-      (room) => room.type === RoomType.DM && room.members.includes(user.id),
-    );
-
-    if (existRoom) {
-      console.log('exist room', existRoom);
-    } else {
-      createDmRoom(user.id, user.name || user.id);
-    }
+    createDmRoom(user.id, user.name || user.id);
   };
 
   return (
