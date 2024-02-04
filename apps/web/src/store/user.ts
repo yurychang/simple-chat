@@ -9,7 +9,7 @@ export interface UserSlice {
   setUsername: (name: string) => void;
 }
 
-export const userId = Math.random().toString();
+export const userId = 'U-' + Math.random().toString().substring(2, 10);
 
 export const createUserSlice: StateCreator<UserSlice, [], [], UserSlice> = (
   set,

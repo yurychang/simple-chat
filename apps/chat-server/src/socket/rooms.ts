@@ -7,4 +7,8 @@ export const registerRoomHandlers = (socket: Socket, io: Server) => {
     console.log(rooms);
     cb(rooms);
   });
+  socket.emit(
+    'user-rooms',
+    roomManager.getUserRooms(socket.handshake.auth.token)
+  );
 };

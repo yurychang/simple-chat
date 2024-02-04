@@ -106,18 +106,12 @@ export function Home() {
 function Sidebar() {
   const [open, setOpen] = useState(false);
   const user = useStore((state) => state.user);
-  const userRooms = useQuery({
-    queryKey: ['chat/user-rooms'],
-    queryFn: () =>
-      fetch(
-        `http://localhost:8080/chat/user-rooms/${socket.id?.toLowerCase()}`,
-      ).then((res) => res.json() as Promise<Room[]>),
-  });
+  const rooms = useStore.use.rooms();
 
-  const createDmRoom = useStore((state) => state.createDmRoom);
+  const createDmRoom = useStore((state) => state.createLocalDmRoom);
 
   const onSelect: UserSelectDialogProps['onSelect'] = (user) => {
-    const existRoom = userRooms.data?.find(
+    const existRoom = rooms.find(
       (room) => room.type === RoomType.DM && room.members.includes(user.id),
     );
 
@@ -163,7 +157,7 @@ function UserRooms() {
       }),
   });
 
-  const localRooms = useStore((state) => state.rooms);
+  const localRooms = useStore((state) => state.localRooms);
 
   const rooms = [...(existRooms.data || []), ...localRooms]
     .sort((a, b) => b.createdAt - a.createdAt)
