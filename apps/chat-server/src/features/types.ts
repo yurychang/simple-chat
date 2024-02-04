@@ -6,10 +6,6 @@ export type ConnectedUser = {
   name: string;
   socket: Socket;
 };
-export type MessageData = {
-  roomId: string;
-  content: string;
-};
 
 export type Room = {
   id: string;

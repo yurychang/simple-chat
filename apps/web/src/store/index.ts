@@ -6,14 +6,14 @@ import { createSelectors } from '@/utils/createSelectors';
 import { createRoomSlice, RoomSlice } from './room';
 import { createUserSlice, UserSlice } from './user';
 
-export const useStore = createSelectors(
-  create<RoomSlice & UserSlice>()(
-    devtools(
-      (...a) => ({
-        ...createRoomSlice(...a),
-        ...createUserSlice(...a),
-      }),
-      { enabled: import.meta.env.DEV },
-    ),
+export const store = create<RoomSlice & UserSlice>()(
+  devtools(
+    (...a) => ({
+      ...createRoomSlice(...a),
+      ...createUserSlice(...a),
+    }),
+    { enabled: import.meta.env.DEV },
   ),
 );
+
+export const useStore = createSelectors(store);

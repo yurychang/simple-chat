@@ -1,32 +1,21 @@
-import { useQuery } from '@tanstack/react-query';
-
 import { RoomType } from '@/constants/enums';
-import { socket } from '@/libs/socket';
 import { useStore } from '@/store';
 import { userId } from '@/store/user';
-import { Room } from '@/types';
 import { cn } from '@/utils/cn';
 
 export function UserRooms() {
   const setCurrentRoom = useStore.use.setCurrentRoom();
   const currentRoomId = useStore.use.currentRoomId();
+  const localRooms = useStore.use.localRooms();
 
-  const remoteRooms = useQuery({
-    queryKey: ['chat/rooms'],
-    queryFn: () =>
-      new Promise<Room[]>((resolve) => {
-        socket.emit('rooms', '', (response: Room[]) => resolve(response));
-      }),
-  });
-
-  const localRooms = useStore((state) => state.localRooms);
+  const remoteRooms = useStore.use.rooms();
 
   const rooms = [
-    ...(remoteRooms.data || []).map((room) => {
+    ...remoteRooms.map((room) => {
       if (room.type === RoomType.DM) {
         return {
           ...room,
-          name: room.members.find((member) => member !== userId),
+          name: room.members.find((member) => member.id !== userId)?.name,
         };
       }
       return room;

@@ -1,17 +1,15 @@
 import { useState } from 'react';
 import { LuSearch } from 'react-icons/lu';
 
+import { SetUsernameDialog } from '@/components/set-username-dialog';
 import { Input } from '@/components/ui/input';
 import { UserRooms } from '@/components/user-rooms';
 import {
   UserSelectDialog,
   UserSelectDialogProps,
 } from '@/components/user-select-dialog';
-import { RoomType } from '@/constants/enums';
 import { useStore } from '@/store';
 import { userId } from '@/store/user';
-
-import { SetupUsernameDialog } from '../pages/home';
 
 export function Sidebar() {
   const [open, setOpen] = useState(false);
@@ -25,10 +23,10 @@ export function Sidebar() {
 
   return (
     <div className="py-5">
-      <SetupUsernameDialog>
+      <SetUsernameDialog>
         <p>{user.name}</p>
         <p className="text-sm text-slate-400">#{userId}</p>
-      </SetupUsernameDialog>
+      </SetUsernameDialog>
       <div className="my-3"></div>
       <Input
         leftIcon={<LuSearch />}

@@ -28,7 +28,7 @@ export const roomManager = {
     room = roomManager.createRoom(name, creator, RoomType.DM);
     roomManager.joinRoom(room.id, creator);
     roomManager.joinRoom(room.id, targetUser);
-    return room.id;
+    return room;
   },
   joinRoom: (roomId: string, userId: string) => {
     const room = roomMap.get(roomId);
