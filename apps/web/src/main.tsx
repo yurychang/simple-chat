@@ -1,5 +1,5 @@
 import './index.css';
-import './libs/socket';
+import './loaders/socket';
 
 import React from 'react';
 import ReactDOM from 'react-dom/client';

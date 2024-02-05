@@ -1,7 +1,7 @@
 import { io } from 'socket.io-client';
 
-import { registerMessageHandlers } from '@/features/message';
-import { registerRoomHandlers } from '@/features/rooms';
+import { registerMessageHandlers } from '@/features/message/socket-handlers';
+import { registerRoomHandlers } from '@/features/room/socket-handlers';
 import { userId } from '@/store/user';
 
 const options = {

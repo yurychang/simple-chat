@@ -6,7 +6,7 @@ import { z } from 'zod';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormField, FormItem } from '@/components/ui/form';
-import { sendMessage } from '@/features/message';
+import { sendMessage } from '@/features/message/socket-handlers';
 import { useStore } from '@/store';
 import { userId } from '@/store/user';
 import { cn } from '@/utils/cn';

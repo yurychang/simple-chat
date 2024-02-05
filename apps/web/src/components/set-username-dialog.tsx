@@ -20,7 +20,7 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { socket } from '@/libs/socket';
+import { socket } from '@/loaders/socket';
 import { useStore } from '@/store';
 
 const userFormSchema = z.object({

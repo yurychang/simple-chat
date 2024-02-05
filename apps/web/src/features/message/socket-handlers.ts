@@ -2,9 +2,9 @@
 import { unstable_batchedUpdates } from 'react-dom';
 import { Socket } from 'socket.io-client';
 
-import { socket } from '@/libs/socket';
+import { Room } from '@/features/room/store';
+import { socket } from '@/loaders/socket';
 import { store } from '@/store';
-import { Room } from '@/store/room';
 import { userId } from '@/store/user';
 
 export const registerMessageHandlers = (socket: Socket) => {
