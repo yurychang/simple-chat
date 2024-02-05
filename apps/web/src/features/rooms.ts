@@ -18,4 +18,9 @@ export const registerRoomHandlers = (socket: Socket) => {
       store.getState().addRoom({ ...room, messages: [] });
     });
   });
+  socket.on('user:update', ({ id, name }: { id: string; name: string }) => {
+    unstable_batchedUpdates(() => {
+      store.getState().updateUser(id, name);
+    });
+  });
 };

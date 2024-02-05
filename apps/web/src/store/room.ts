@@ -25,6 +25,7 @@ export interface RoomSlice {
   addMessage: (roomId: string, message: Message) => void;
   addRoom: (room: Room) => void;
   removeLocalRoom: (roomId: string) => void;
+  updateUser: (userId: string, name: string) => void;
 }
 
 export const createRoomSlice: StateCreator<RoomSlice, [], [], RoomSlice> = (
@@ -88,4 +89,23 @@ export const createRoomSlice: StateCreator<RoomSlice, [], [], RoomSlice> = (
     set((state) => ({
       localRooms: state.localRooms.filter((room) => room.id !== roomId),
     })),
+  updateUser: (userId: string, name: string) => {
+    set((state) => {
+      const rooms = state.rooms.map((r) => updateUser(r, userId, name));
+      const localRooms = state.localRooms.map((r) =>
+        updateUser(r, userId, name),
+      );
+      return { rooms, localRooms };
+    });
+  },
 });
+
+function updateUser(room: Room, userId: string, name: string) {
+  const members = room.members.map((member) => {
+    if (member.id === userId) {
+      member.name = name;
+    }
+    return member;
+  });
+  return { ...room, members };
+}

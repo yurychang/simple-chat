@@ -7,11 +7,10 @@ export function UserRooms() {
   const setCurrentRoom = useStore.use.setCurrentRoom();
   const currentRoomId = useStore.use.currentRoomId();
   const localRooms = useStore.use.localRooms();
+  const rooms = useStore.use.rooms();
 
-  const remoteRooms = useStore.use.rooms();
-
-  const rooms = [
-    ...remoteRooms.map((room) => {
+  const fullRooms = [
+    ...rooms.map((room) => {
       if (room.type === RoomType.DM) {
         return {
           ...room,
@@ -27,7 +26,7 @@ export function UserRooms() {
     <div className="mt-5">
       <p className="mb-3 text-gray-600">Rooms</p>
       <div className="space-y-3">
-        {rooms.map((room) => (
+        {fullRooms.map((room) => (
           <div
             key={room.id}
             className={cn('p-3 border rounded cursor-pointer', {

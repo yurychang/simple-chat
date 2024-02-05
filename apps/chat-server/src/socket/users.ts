@@ -24,11 +24,13 @@ export const registerUserHandlers = (socket: Socket, io: Server) => {
     callback({ ok: true });
 
     const rooms = roomManager.getUserRooms(socket.handshake.auth.token);
+    let ioTo: ReturnType<Server['to']> | undefined;
     rooms.forEach((room) => {
-      io.to(room?.id).emit('user:update', {
-        id: socket.handshake.auth.token,
-        name: userData.name,
-      });
+      ioTo = io.to(room?.id);
+    });
+    ioTo?.emit('user:update', {
+      id: socket.handshake.auth.token,
+      name: userData.name,
     });
   });
 };
