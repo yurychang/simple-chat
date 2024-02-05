@@ -1,7 +1,7 @@
 import app from './app';
 import _debug from 'debug';
 import http from 'http';
-import { bindSocket } from './socketio';
+import { loadSocket } from './loaders/socket';
 
 const debug = _debug('express-rest-api-template');
 
@@ -10,7 +10,7 @@ app.set('port', port);
 
 const server = http.createServer(app);
 
-bindSocket(server);
+loadSocket(server);
 
 server.listen(port);
 server.on('error', onError);

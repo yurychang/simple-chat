@@ -1,6 +1,6 @@
 import { Server, Socket } from 'socket.io';
-import { roomManager } from '@/features/room';
-import { connectedUsers } from '@/features/data';
+import { roomManager } from '@/features/room/room';
+import { connectedUsers } from '@/features/user/connected-users';
 
 export const registerRoomHandlers = (socket: Socket, io: Server) => {
   socket.emit(

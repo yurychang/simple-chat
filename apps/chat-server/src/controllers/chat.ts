@@ -1,6 +1,6 @@
 import { Router } from 'express';
-import { connectedUsers } from '@/features/data';
-import { roomManager } from '@/features/room';
+import { connectedUsers } from '@/features/user/connected-users';
+import { roomManager } from '@/features/room/room';
 
 export const chatRouter = Router();
 

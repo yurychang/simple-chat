@@ -1,10 +1,10 @@
 import { Server } from 'socket.io';
 import type * as http from 'http';
-import { registerMessageHandlers as registerMessageHandler } from './socket/messages';
-import { registerUserHandlers } from './socket/users';
-import { registerRoomHandlers } from './socket/rooms';
+import { registerMessageHandlers as registerMessageHandler } from '../features/message/socket-handlers';
+import { registerUserHandlers } from '../features/user/socket-handlers';
+import { registerRoomHandlers } from '../features/room/socket-handlers';
 
-export const bindSocket = (server: http.Server) => {
+export const loadSocket = (server: http.Server) => {
   const io = new Server(server, {
     cors: {
       origin: process.env.WEB_HOST,

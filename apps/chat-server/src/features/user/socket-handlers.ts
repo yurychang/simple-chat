@@ -1,6 +1,6 @@
 import { Socket, Server } from 'socket.io';
-import { connectedUsers } from '../features/data';
-import { roomManager } from '@/features/room';
+import { connectedUsers } from './connected-users';
+import { roomManager } from '@/features/room/room';
 
 export const registerUserHandlers = (socket: Socket, io: Server) => {
   connectedUsers.set(socket.handshake.auth.token, {

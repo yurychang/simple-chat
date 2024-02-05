@@ -1,5 +1,5 @@
 import { Socket } from 'socket.io';
-import { RoomType } from './enums';
+import { RoomType } from '../constants/enums';
 
 export type ConnectedUser = {
   id: Socket['id'];

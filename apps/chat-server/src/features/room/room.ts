@@ -1,7 +1,8 @@
 import { v4 as uuid } from 'uuid';
-import { Room } from './types';
-import { RoomType } from './enums';
-import { connectedUsers, roomMap } from './data';
+import { Room } from '../types';
+import { RoomType } from '../../constants/enums';
+import { connectedUsers } from '../user/connected-users';
+import { roomMap } from './room-map';
 
 const userRoomMap = new Map<string, { id: string; type: RoomType }[]>();
 
