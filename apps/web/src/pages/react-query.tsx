@@ -5,7 +5,7 @@ import {
   deleteTodo as deleteTodoApi,
   getTodos,
 } from '@/apis';
-import { Button } from '@/components/button';
+import { Button } from '@/components/ui/button';
 
 const ReactQuery = () => {
   // Access the client

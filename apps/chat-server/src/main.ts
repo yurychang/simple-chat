@@ -1,25 +1,16 @@
 import app from './app';
 import _debug from 'debug';
 import http from 'http';
+import { loadSocket } from './loaders/socket';
 
 const debug = _debug('express-rest-api-template');
-
-/**
- * Get port from environment and store in Express.
- */
 
 const port = normalizePort(process.env.PORT);
 app.set('port', port);
 
-/**
- * Create HTTP server.
- */
-
 const server = http.createServer(app);
 
-/**
- * Listen on provided port, on all network interfaces.
- */
+loadSocket(server);
 
 server.listen(port);
 server.on('error', onError);
@@ -76,5 +67,5 @@ function onError(error: any) {
 function onListening() {
   const addr = server.address();
   const bind = typeof addr === 'string' ? 'pipe ' + addr : 'port ' + addr!.port;
-  debug('Listening on ' + bind);
+  console.log('Server listening on ' + bind);
 }
