@@ -12,4 +12,6 @@
       "@/*": ["*"],
     },
   },
+  "include": ["**/*"],
+  "files": ["./src/express-extensions.d.ts"],
 }

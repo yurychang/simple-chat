@@ -1,3 +1,4 @@
+import { encryptPassword } from '@/utils/pwd-encrypt';
 import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
@@ -6,12 +7,12 @@ async function main() {
   await prisma.user.createMany({
     data: [
       {
-        name: 'Alice',
-        email: 'alice@gmail.com',
+        username: 'Alice',
+        password: await encryptPassword('alice123'),
       },
       {
-        name: 'Bob',
-        email: 'bob@gmail.com',
+        username: 'Bob',
+        password: await encryptPassword('bob123'),
       },
     ],
   });
