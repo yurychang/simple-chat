@@ -4,8 +4,8 @@ module.exports = {
   extends: [
     'plugin:vitest/recommended',
     'plugin:@tanstack/eslint-plugin-query/recommended',
-    '@yurychang/react',
     '@yurychang/typescript',
+    '@yurychang/react',
     'prettier',
   ],
   plugins: ['simple-import-sort', 'import'],
@@ -31,5 +31,6 @@ module.exports = {
         },
       },
     ],
+    'react/prop-types': 'off',
   },
 };
